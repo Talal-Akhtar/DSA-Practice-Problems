@@ -20,8 +20,9 @@ Node* insert(Node* head, int val)
 { 
     Node* newNode = new Node; 
     newNode->data = val; 
+    newNode->next = nullptr; 
  
-    if (head == NULL) 
+    if (head == nullptr) 
     { 
         newNode->next = newNode; 
         return newNode; 
@@ -39,60 +40,65 @@ Node* insert(Node* head, int val)
     return head; 
 } 
  
+// Improved removeNode with proper memory management
 Node* removeNode(Node* head, int key) 
 { 
-    if (head == NULL) 
+    if (head == nullptr) 
     { 
-        return NULL; 
+        return nullptr; 
     } 
  
-    Node* curr = head; 
-    Node* prev = NULL; 
+    // Special case: only one node in the list
+    if (head->next == head) 
+    { 
+        if (head->data == key) 
+        { 
+            delete head; 
+            return nullptr; 
+        } 
+        return head; 
+    } 
  
-    do 
+    // Case 1: Removing the head node
+    if (head->data == key) 
+    { 
+        Node* temp = head; 
+        while (temp->next != head) 
+        { 
+            temp = temp->next; 
+        } 
+ 
+        Node* newHead = head->next; 
+        temp->next = newHead; 
+        delete head; 
+        return newHead; 
+    } 
+ 
+    // Case 2: Removing a non-head node
+    Node* curr = head->next; 
+    Node* prev = head; 
+ 
+    while (curr != head) 
     { 
         if (curr->data == key) 
         { 
-            if (curr == head) 
-            { 
-                Node* temp = head; 
-                while (temp->next != head) 
-                { 
-                    temp = temp->next; 
-                } 
- 
-                if (head->next == head) 
-                { 
-                    delete head; 
-                    return NULL; 
-                } 
- 
-                temp->next = head->next; 
-                head = head->next; 
-                delete curr; 
-                return head; 
-            } 
-            else 
-            { 
-                prev->next = curr->next; 
-                delete curr; 
-                return head; 
-            } 
+            prev->next = curr->next; 
+            delete curr; 
+            return head; 
         } 
- 
         prev = curr; 
         curr = curr->next; 
+    } 
  
-    } while (curr != head); 
- 
+    // Node not found
     return head; 
 } 
  
 void display(Node* head) 
 { 
-    if (head == NULL) 
+    if (head == nullptr) 
     { 
-        cout << "List is empty"; 
+        cout << "List is empty" << endl; 
         return; 
     } 
  
@@ -106,14 +112,38 @@ void display(Node* head)
  
     cout << endl; 
 } 
+
+// Clean up entire list
+void deleteList(Node* head) 
+{ 
+    if (head == nullptr) return; 
+ 
+    Node* temp = head->next; 
+    head->next = nullptr; // Break the circle
+ 
+    while (temp != nullptr) 
+    { 
+        Node* toDelete = temp; 
+        temp = temp->next; 
+        delete toDelete; 
+    } 
+ 
+    delete head; 
+} 
  
 int main() 
 { 
-    Node* head = NULL; 
+    Node* head = nullptr; 
     int n, val, key; 
  
     cout << "Enter number of nodes: "; 
     cin >> n; 
+ 
+    if (n < 0) 
+    { 
+        cout << "Invalid input: n must be non-negative" << endl; 
+        return 1; 
+    } 
  
     for (int i = 0; i < n; i++) 
     { 
@@ -127,6 +157,8 @@ int main()
     head = removeNode(head, key); 
  
     display(head); 
+    
+    deleteList(head); // Clean up memory
  
     return 0; 
 }
