@@ -48,7 +48,6 @@ Node* removeNode(Node* head, int key)
         return nullptr; 
     } 
  
-    // Special case: only one node in the list
     if (head->next == head) 
     { 
         if (head->data == key) 
@@ -59,7 +58,6 @@ Node* removeNode(Node* head, int key)
         return head; 
     } 
  
-    // Case 1: Removing the head node
     if (head->data == key) 
     { 
         Node* temp = head; 
@@ -119,7 +117,7 @@ void deleteList(Node* head)
     if (head == nullptr) return; 
  
     Node* temp = head->next; 
-    head->next = nullptr; // Break the circle
+    head->next = nullptr; 
  
     while (temp != nullptr) 
     { 
@@ -158,7 +156,7 @@ int main()
  
     display(head); 
     
-    deleteList(head); // Clean up memory
+    deleteList(head); 
  
     return 0; 
 }
